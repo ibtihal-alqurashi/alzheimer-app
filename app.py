@@ -1,10 +1,9 @@
 import os
 import numpy as np
 import streamlit as st
-import tensorflow as tf
 import requests
 from PIL import Image
-from tensorflow.keras.applications.vgg16 import preprocess_input
+import tensorflow as tf
 
 from auth import login, check_login
 from utils import save_result
@@ -33,6 +32,9 @@ MODEL_URL = "https://drive.google.com/uc?export=download&id=1s6bLOL2xDY3OQmi0x9S
 MODEL_PATH = "model.h5"
 
 
+# =====================
+# تحميل الموديل
+# =====================
 @st.cache_resource
 def load_model():
     if not os.path.exists(MODEL_PATH):
@@ -48,7 +50,7 @@ def load_model():
 model = load_model()
 
 # =====================
-# SIDEBAR DASHBOARD
+# SIDEBAR
 # =====================
 st.sidebar.title("📊 Dashboard")
 
@@ -57,18 +59,20 @@ if os.path.exists("results.csv"):
 else:
     st.sidebar.warning("No results yet")
 
-
 # =====================
-# IMAGE PREPROCESS
+# IMAGE PREPROCESS (FIXED)
 # =====================
 def preprocess_img(img):
     img = img.resize(IMG_SIZE)
     img = np.array(img)
 
+    # remove alpha channel if exists
     if img.shape[-1] == 4:
         img = img[..., :3]
 
-    img = preprocess_input(img)
+    # normalize (instead of preprocess_input)
+    img = img.astype(np.float32) / 255.0
+
     return np.expand_dims(img, axis=0)
 
 
@@ -104,7 +108,7 @@ if uploaded:
         st.metric("Confidence", f"{conf:.2f}%")
 
     # =====================
-    # EXPLAINABILITY (simple)
+    # EXPLAINABILITY
     # =====================
     st.write("### 🧠 Model Insight")
 
