@@ -3,3 +3,6 @@ tensorflow
 numpy
 pillow
 requests
+pandas
+
+...
