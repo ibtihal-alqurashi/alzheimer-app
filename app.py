@@ -23,7 +23,7 @@ if not check_login():
     st.stop()
 
 # =====================
-# MODEL
+# MODEL CONFIG
 # =====================
 CLASSES = ["Mild", "Moderate", "Non Demented", "Very Mild"]
 IMG_SIZE = (224, 224)
@@ -31,9 +31,8 @@ IMG_SIZE = (224, 224)
 MODEL_URL = "https://drive.google.com/uc?export=download&id=1s6bLOL2xDY3OQmi0x9SzWVNUanu6O8_H"
 MODEL_PATH = "model.h5"
 
-
 # =====================
-# تحميل الموديل
+# LOAD MODEL
 # =====================
 @st.cache_resource
 def load_model():
@@ -46,7 +45,6 @@ def load_model():
 
     return tf.keras.models.load_model(MODEL_PATH)
 
-
 model = load_model()
 
 # =====================
@@ -55,7 +53,7 @@ model = load_model()
 st.sidebar.title("📊 Dashboard")
 
 if os.path.exists("results.csv"):
-    st.sidebar.info("Results saved ✔")
+    st.sidebar.success("Results saved ✔")
 else:
     st.sidebar.warning("No results yet")
 
@@ -66,15 +64,13 @@ def preprocess_img(img):
     img = img.resize(IMG_SIZE)
     img = np.array(img)
 
-    # remove alpha channel if exists
     if img.shape[-1] == 4:
         img = img[..., :3]
 
-    # normalize (instead of preprocess_input)
+    # normalization instead of VGG preprocess
     img = img.astype(np.float32) / 255.0
 
     return np.expand_dims(img, axis=0)
-
 
 # =====================
 # MAIN UI
@@ -108,7 +104,7 @@ if uploaded:
         st.metric("Confidence", f"{conf:.2f}%")
 
     # =====================
-    # EXPLAINABILITY
+    # INSIGHT
     # =====================
     st.write("### 🧠 Model Insight")
 
