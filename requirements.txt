@@ -3,5 +3,6 @@ tensorflow==2.15.0
 numpy
 pandas
 pillow
-opencv-python-headless
+requests
 scikit-learn
+h5py
